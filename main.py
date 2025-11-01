@@ -103,7 +103,10 @@ def risk_api(req: DistanceReq):
 
     elev_ponto = elevation_m(lat, lon)
     elev_rio = elevation_m(rio_lat, rio_lon)
-    queda_rel = elev_ponto - elev_rio if elev_ponto and elev_rio else None
+    if elev_ponto is not None and elev_rio is not None:
+        queda_rel = elev_ponto - elev_rio
+    else:
+        queda_rel = None
 
     # lógica de risco simples
     if dist_m < 150 and queda_rel < 5:
@@ -117,6 +120,6 @@ def risk_api(req: DistanceReq):
         "score": score,
         "nivel": nivel,
         "distancia_rio_m": round(dist_m, 1),
-        "queda_relativa_m": round(queda_rel, 1) if queda_rel else None,
+        "queda_relativa_m": round(queda_rel, 1) if queda_rel is not None else None,
         "rio_mais_proximo": rio_nome
     }
