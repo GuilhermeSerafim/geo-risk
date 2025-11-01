@@ -5,6 +5,7 @@ from shapely.strtree import STRtree
 from shapely.ops import transform as shp_transform, nearest_points
 from pyproj import Transformer
 import json
+import requests;
 
 app = FastAPI()
 
@@ -60,6 +61,13 @@ def distance_to_water_info(lon, lat):
 
     return dist_m, idx, (rx, ry)
 
+def elevation_m(lat, lon):
+    url = f"https://api.open-meteo.com/v1/elevation?latitude={lat}&longitude={lon}"
+    r = requests.get(url, timeout=10)
+    data = r.json()
+    return data["elevation"][0] if "elevation" in data else None
+
+
 # 4) Payload de entrada (polígono GeoJSON)
 class DistanceReq(BaseModel):
     polygon: dict  # GeoJSON geometry ou feature
@@ -81,4 +89,34 @@ def distance_api(req: DistanceReq):
         "rio_mais_proximo": rio_nome,
         "waterway": rio_tipo,
         "nearest_point": {"lon": rio_lon, "lat": rio_lat}
+    }
+
+@app.post("/risk")
+def risk_api(req: DistanceReq):
+    geom = shape(req.polygon.get("geometry", req.polygon))
+    rep = geom.representative_point()
+    lon, lat = rep.x, rep.y
+
+    dist_m, idx, (rio_lon, rio_lat) = distance_to_water_info(lon, lat)
+    rio_feature = features[idx]
+    rio_nome = rio_feature["properties"].get("name", "Desconhecido")
+
+    elev_ponto = elevation_m(lat, lon)
+    elev_rio = elevation_m(rio_lat, rio_lon)
+    queda_rel = elev_ponto - elev_rio if elev_ponto and elev_rio else None
+
+    # lógica de risco simples
+    if dist_m < 150 and queda_rel < 5:
+        score, nivel = 9.0, "Alto"
+    elif dist_m < 300 or queda_rel < 10:
+        score, nivel = 6.0, "Médio"
+    else:
+        score, nivel = 2.0, "Baixo"
+
+    return {
+        "score": score,
+        "nivel": nivel,
+        "distancia_rio_m": round(dist_m, 1),
+        "queda_relativa_m": round(queda_rel, 1) if queda_rel else None,
+        "rio_mais_proximo": rio_nome
     }
