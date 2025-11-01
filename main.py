@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 from shapely.geometry import shape, Point
 from shapely.strtree import STRtree
-from shapely.ops import transform as shp_transform
+from shapely.ops import transform as shp_transform, nearest_points
 from pyproj import Transformer
 import json
 
@@ -33,22 +33,32 @@ def utm_transformer(lon, lat):
     epsg = 32700 + zone  # SIRGAS/UTM Hemisfério Sul
     return Transformer.from_crs("EPSG:4326", f"EPSG:{epsg}", always_xy=True)
 
-def distance_to_water_m(lon, lat):
+def distance_to_water_info(lon, lat):
     pt = Point(lon, lat)
-    nearest_idx = tree.nearest(pt)  # pode retornar índice ou geometria, dependendo da versão
+    nearest_obj = tree.nearest(pt)
 
-    # normaliza para índice
     import numpy as np
-    if not isinstance(nearest_idx, (int, np.integer)):
-        nearest_idx = water_geoms.index(nearest_idx)
+    if isinstance(nearest_obj, (int, np.integer)):
+        idx = int(nearest_obj)
+        nearest_geom = water_geoms[idx]
+    else:
+        nearest_geom = nearest_obj
+        idx = water_geoms.index(nearest_geom)
 
-    nearest_geom = water_geoms[nearest_idx]
+    # Projeção p/ metros
     tr = utm_transformer(lon, lat)
     pt_m = shp_transform(lambda x,y,z=None: tr.transform(x,y), pt)
-    nearest_m = shp_transform(lambda x,y,z=None: tr.transform(x,y), nearest_geom)
-    dist_m = pt_m.distance(nearest_m)
+    geom_m = shp_transform(lambda x,y,z=None: tr.transform(x,y), nearest_geom)
 
-    return dist_m, nearest_idx
+    # Ponto exato no rio mais próximo (em metros)
+    p_user_m, p_rio_m = nearest_points(pt_m, geom_m)
+    dist_m = p_user_m.distance(p_rio_m)
+
+    # Volta o ponto do rio para WGS84
+    tr_inv = Transformer.from_crs(tr.target_crs, "EPSG:4326", always_xy=True)
+    rx, ry = tr_inv.transform(p_rio_m.x, p_rio_m.y)
+
+    return dist_m, idx, (rx, ry)
 
 # 4) Payload de entrada (polígono GeoJSON)
 class DistanceReq(BaseModel):
@@ -60,11 +70,15 @@ def distance_api(req: DistanceReq):
     rep = geom.representative_point()
     lon, lat = rep.x, rep.y
 
-    dist_m, nearest_idx = distance_to_water_m(lon, lat)
+    dist_m, nearest_idx, (rio_lon, rio_lat) = distance_to_water_info(lon, lat)
     rio_feature = features[nearest_idx]
-    rio_nome = rio_feature["properties"].get("name", "Desconhecido")
+    props = rio_feature.get("properties", {})
+    rio_nome = props.get("name", "Desconhecido")
+    rio_tipo = props.get("waterway", "desconhecido")
 
     return {
         "distancia_rio_m": round(dist_m, 1),
-        "rio_mais_proximo": rio_nome
+        "rio_mais_proximo": rio_nome,
+        "waterway": rio_tipo,
+        "nearest_point": {"lon": rio_lon, "lat": rio_lat}
     }
