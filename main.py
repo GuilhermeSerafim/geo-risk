@@ -8,6 +8,17 @@ import json
 
 app = FastAPI()
 
+# adicione isto após app = FastAPI()
+from fastapi.middleware.cors import CORSMiddleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # ajuste depois
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
 # 1) Carregar rios de Pinheiros (se tiver Polygon, vira linha/contorno)
 gj = json.load(open("data/export.geojson", encoding="utf-8"))
 water_geoms = []
