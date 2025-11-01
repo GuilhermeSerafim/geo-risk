@@ -20,16 +20,11 @@ app.add_middleware(
 
 
 # 1) Carregar rios de Pinheiros (se tiver Polygon, vira linha/contorno)
-gj = json.load(open("data/export.geojson", encoding="utf-8"))
-water_geoms = []
-for f in gj["features"]:
-    g = shape(f["geometry"])
-    if g.geom_type.startswith("Polygon"):
-        g = g.boundary
-    water_geoms.append(g)
-
-# 2) Índice espacial (vizinho mais próximo)
+gj = json.load(open("data/exportCuritiba.geojson", encoding="utf-8"))
+features = gj["features"]
+water_geoms = [shape(f["geometry"]) for f in features]
 tree = STRtree(water_geoms)
+
 
 # 3) Utilitários de projeção (lon/lat -> metros UTM)
 def utm_transformer(lon, lat):
@@ -40,11 +35,20 @@ def utm_transformer(lon, lat):
 
 def distance_to_water_m(lon, lat):
     pt = Point(lon, lat)
-    nearest = tree.nearest(pt)
+    nearest_idx = tree.nearest(pt)  # pode retornar índice ou geometria, dependendo da versão
+
+    # normaliza para índice
+    import numpy as np
+    if not isinstance(nearest_idx, (int, np.integer)):
+        nearest_idx = water_geoms.index(nearest_idx)
+
+    nearest_geom = water_geoms[nearest_idx]
     tr = utm_transformer(lon, lat)
     pt_m = shp_transform(lambda x,y,z=None: tr.transform(x,y), pt)
-    nearest_m = shp_transform(lambda x,y,z=None: tr.transform(x,y), nearest)
-    return pt_m.distance(nearest_m)
+    nearest_m = shp_transform(lambda x,y,z=None: tr.transform(x,y), nearest_geom)
+    dist_m = pt_m.distance(nearest_m)
+
+    return dist_m, nearest_idx
 
 # 4) Payload de entrada (polígono GeoJSON)
 class DistanceReq(BaseModel):
@@ -53,7 +57,14 @@ class DistanceReq(BaseModel):
 @app.post("/distance")
 def distance_api(req: DistanceReq):
     geom = shape(req.polygon.get("geometry", req.polygon))
-    rep = geom.representative_point()  # ponto representativo da área
+    rep = geom.representative_point()
     lon, lat = rep.x, rep.y
-    dist_m = distance_to_water_m(lon, lat)
-    return {"distancia_rio_m": round(dist_m, 1)}
+
+    dist_m, nearest_idx = distance_to_water_m(lon, lat)
+    rio_feature = features[nearest_idx]
+    rio_nome = rio_feature["properties"].get("name", "Desconhecido")
+
+    return {
+        "distancia_rio_m": round(dist_m, 1),
+        "rio_mais_proximo": rio_nome
+    }
