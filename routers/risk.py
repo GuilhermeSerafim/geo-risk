@@ -18,7 +18,7 @@ def risk_api(req: DistanceReq):
 
     dist_m, idx, (rio_lon, rio_lat) = distance_to_water_info(lon, lat)
     rio_feature = features[idx]
-    rio_nome = rio_feature["properties"].get("name", "Desconhecido")
+    rio_nome = rio_feature["properties"].get("name") or "Tipo de rio não identificado"
 
     elev_ponto = elevation_m(lat, lon)
     elev_rio = elevation_m(rio_lat, rio_lon)
