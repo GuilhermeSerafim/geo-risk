@@ -1,48 +1,26 @@
 from fastapi import FastAPI
-from pydantic import BaseModel
-from shapely.geometry import shape, Point
-from shapely.strtree import STRtree
-from shapely.ops import transform as shp_transform
-from pyproj import Transformer
-import json
+from fastapi.middleware.cors import CORSMiddleware
+from routers.distance import router as distance_router
+from routers.risk import router as risk_router
+from routers.ai_vertical import router as ai_router
+from routers.elevation import router as elevation_router
+from routers.flood_stats import router as flood_stats_router
+from routers.areas_rosa import router as areas_rosa_router
 
-app = FastAPI()
+app = FastAPI(title="GeoRisk API")
 
-# 1) Carregar rios de Pinheiros (se tiver Polygon, vira linha/contorno)
-gj = json.load(open("data/export.geojson", encoding="utf-8"))
-water_geoms = []
-for f in gj["features"]:
-    g = shape(f["geometry"])
-    if g.geom_type.startswith("Polygon"):
-        g = g.boundary
-    water_geoms.append(g)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-# 2) Índice espacial (vizinho mais próximo)
-tree = STRtree(water_geoms)
-
-# 3) Utilitários de projeção (lon/lat -> metros UTM)
-def utm_transformer(lon, lat):
-    # zona UTM aproximada a partir da longitude
-    zone = int((lon + 180)//6) + 1
-    epsg = 32700 + zone  # SIRGAS/UTM Hemisfério Sul
-    return Transformer.from_crs("EPSG:4326", f"EPSG:{epsg}", always_xy=True)
-
-def distance_to_water_m(lon, lat):
-    pt = Point(lon, lat)
-    nearest = tree.nearest(pt)
-    tr = utm_transformer(lon, lat)
-    pt_m = shp_transform(lambda x,y,z=None: tr.transform(x,y), pt)
-    nearest_m = shp_transform(lambda x,y,z=None: tr.transform(x,y), nearest)
-    return pt_m.distance(nearest_m)
-
-# 4) Payload de entrada (polígono GeoJSON)
-class DistanceReq(BaseModel):
-    polygon: dict  # GeoJSON geometry ou feature
-
-@app.post("/distance")
-def distance_api(req: DistanceReq):
-    geom = shape(req.polygon.get("geometry", req.polygon))
-    rep = geom.representative_point()  # ponto representativo da área
-    lon, lat = rep.x, rep.y
-    dist_m = distance_to_water_m(lon, lat)
-    return {"distancia_rio_m": round(dist_m, 1)}
+# incluir rotas
+app.include_router(distance_router, prefix="/geo")
+app.include_router(risk_router, prefix="/geo")
+app.include_router(ai_router, prefix="/ai")
+app.include_router(elevation_router, prefix="/geo")
+app.include_router(flood_stats_router, prefix="/geo")
+app.include_router(areas_rosa_router, prefix="/geo")

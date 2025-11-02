@@ -1,0 +1,950 @@
+Novel Bayesian Additive Regression Tree
+methodology for flood susceptibility modeling
+Saeid Janizadeh
+ Tarbiat modares university
+Mehdi Vafakhah (  vafakhah@modares.ac.ir )
+ Tarbiat Modares University https://orcid.org/0000-0002-8113-9113
+Zoran Kapelan
+ Delft university
+Naghmeh Mobarghaee Dinan
+ Shahid Beheshti University
+
+
+
+Research Article
+
+Keywords: Flood susceptibility mapping, Bayesian, Regression Tree, Ensemble model, Bayesian Additive
+Regression Tree (BART)
+
+Posted Date: July 9th, 2021
+
+DOI: https://doi.org/10.21203/rs.3.rs-267890/v1
+
+License:   This work is licensed under a Creative Commons Attribution 4.0 International License.
+Read Full License
+
+
+
+
+                                                  Page 1/31
+Abstract
+Identifying areas prone to flooding is a key step in flood hazard management. The purpose of this study
+is to develop and present a novel flood susceptibility model based on Bayesian Additive Regression Tree
+(BART) methodology. The predictive performance of new model is assessed via comparison with the
+Naïve Bayes (NB) and Random Forest (RF) based methods that were previously published in the
+literature. All models were tested on a real case study based in the Kan watershed in Iran. The following
+fifteen climatic and geo-environmental variables were used as inputs into all flood susceptibility models:
+altitude, aspect, slope, plan curvature, profile curvature, drainage density, distance from river distance
+from road, stream power index (SPI), topographic wetness index (TPI), topographic position index (TPI),
+curve number (CN), land use, lithology and rainfall. Based on the existing flood field survey and other
+information available for the analyzed area, a total of 118 flood locations were identified as potentially
+prone to flooding. The data available were divided into two groups with 70% used for training and 30% for
+validation of all models. The receiver operating characteristic (ROC) curve parameters were used to
+evaluate the predictive accuracy of the new and existing models. Based on the area under curve (AUC) the
+new BART (86%) model outperformed the NB (80%) and RF (85%) models. Regarding the importance of
+input variables, the results obtained showed that the altitude and distance from the river are the most
+important variables for assessing flooding susceptibility.
+
+
+1. Introduction
+Any unforeseen natural occurrence and, in the event of an emergency that weakens or destroys economic,
+social and physical capacity, such as loss of life and finances, destruction of infrastructure, economic
+resources and areas of employment, is defined as a natural disaster, highlights include earthquakes,
+floods, drought, seawater, volcanoes, landslides, hurricanes and natural pests (Vetrivel et al. 2018).
+Flooding as one of the major natural disasters that have occurred is very important in terms of economic
+losses and serious humanitarian concerns, in other words, the flood phenomenon is one of the most
+dynamic and disruptive natural events that put human life and property and social and economic
+conditions at greater risk than any other natural disaster (Rahmati et al. 2016; Yariyan et al. 2020).
+Flooding is an influx of water that overwhelms the surrounding and marginal areas and may cause
+damage to agricultural land, urban areas and tolls (Perera et al. 2015). Flooding is one of the most
+important hydro-ecological phenomena of nature that causes damage to human achievements at all
+times (Woodward et al. 2014; Darabi et al. 2019; Vafakhah et al. 2020). Among the populated areas and
+centers, there is the highest risk and potential for tangible physical damage caused by the flood. In recent
+years, the increase in urban flood hazards, particularly along the river banks, has resulted in the risk of
+flooding for residents and movable property in the area (Choubin et al. 2019). Due to the varying climate,
+unpredictable temperatures and rainfall in many of Iran's watersheds, several floods occur every year
+(Tehrany et al. 2014). Limiting environmental resources, reducing and destroying them as a result of the
+expansion of human activities, poses many challenges for today's society and the next generation. The
+Kan watersheds have not been impacted by these natural disasters and have been affected by flooding
+
+                                                  Page 2/31
+annually; studies show that the Kan watershed is vulnerable to floods. The emergence of restaurants,
+leisure, tourist and pilgrimage centers adjacent to the steep rivers Kan watershed have increased the
+potential for damage. Seven important flood events were recorded in this watershed, causing damage to
+industrial, residential, agricultural land use, and fatalities, according to the available information.
+
+Reducing human casualties as well as damage to property and the environment is a key objective shared
+by countries most often impacted by natural disasters and they are increasingly conducting feasibility
+studies with economic analysis to mitigate the effects of these disasters (Molinos-Senante et al. 2011).
+Although floods cannot be prevented, the analysis of damage can be mitigated through appropriate
+analysis and forecasting techniques (Heidari 2014). The first step is to identify flood-prone areas with
+potential for flooding and prepare flood maps (Janizadeh et al. 2019; Hosseini et al. 2020). One way to
+prevent and reduce flood damage is to provide people with reliable information through flood hazard
+zoning maps (Cook and Merwade 2009). Mapping the hazard of floods is an essential step to predict the
+likelihood of a flood and to reduce and control potential floods. To this end, the modelling of flood
+hazards, which may involve multi-temporal data sets, is required. Recently, with the advancement in
+computer science, machine learning methods have been successfully applied in assessing flood hazards
+with higher accuracy. However, there is no agreement which method or set of methods can provide the
+best prediction.
+
+The prediction and determination of flood susceptibility areas have been investigated by various
+researchers. Rapid access to satellite imagery based on remote sensing data has increased the use of
+geographic information systems in the preparation of flood susceptibility maps. A wide range of
+modelling techniques has been proposed and used in natural disaster assessment including AI based
+techniques (Sayers et al 2014). In recent years, Bayesian methods, partly because they are over-resistant
+to the presence of small sample sizes and can control missing or incomplete data, have been developed
+to assess and model flood sensitivity such as Naïve Bayes (Liu et al. 2016; Pham et al. 2020b; Tang et al.
+2020). Also use of regression tree machine learning models such as Random Forest (RF) (Arabameri et
+al. 2020; Chen et al. 2020; Vafakhah et al. 2020), Decision Tree (Khosravi et al. 2018; Costache 2019;
+Janizadeh et al. 2019; Pham et al. 2020a), Logistic Regression (Shafapour Tehrany et al. 2017; Al-Juaidi
+et al. 2018; Tehrany and Kumar 2018) due to the appropriate capability of these models in modeling
+nonlinear phenomena such as flood, has been considered by researchers in this field.
+
+Machine learning algorithms by default usually present point estimates only, and so decisions are made
+ignoring the uncertainty surrounding these estimates. In recent years, the use of ensemble models has
+attracted the attention of researchers in various fields, ensemble models because they benefit from
+several individual models and therefore have better performance than individual models (Al-Abadi 2018;
+Tehrany et al. 2019a; Costache and Bui 2020; Shahabi et al. 2020). Bayesian Additive Regression Tree is
+one of the new ensemble models that combined from Bayesian and Regression tree algorithms and due
+to this model benefit Bayesian framework can give access to the full posterior distribution of all unknown
+parameters in the model, which can be useful in decision-making and reduce uncertainty. Due to the fact
+that the flood is a non-linear phenomenon and has a lot of the uncertainty, use of appropriate models that
+                                                    Page 3/31
+have the ability to predict this phenomena and reduce uncertainty is essential in the management,
+planning and prevention of the hazard of these phenomena.
+
+Therefore, the purpose of this study is to develop and present a new flood susceptibility model based on
+the ensemble type Bayesian Additive Regression Tree (BART) method. The new method will be compared
+with the Naïve Bayes (Bayesian type) and Random Forest (regression tree type) based models to evaluate
+the predictive performance of the new method.
+
+
+2. Data For Flood Susceptibility Modelling
+2.1 Description of the study area
+The Kan River watershed is 200 km2 and is located northwest of Tehran, Iran. This watershed is located
+between latitudes 51° 10′ and 51° 23′ east and 35° 46′ and 35° 58′ north (Fig. 1). The average height of
+the watershed is 2428 meters, the average slope of the whole watershed is 43.4% and the most important
+river in this mountainous region is the Kan River. The study area is located in the southern margin of the
+central Alborz region in terms of geological status and has a mountainous climate and cold to moderate,
+the average annual rainfall is 414.13 mm. The average annual discharge of the Kan River is 2.2 m3/s and
+its annual water volume is about 70 million m3. According to the available information, seven important
+flood events have been reported in the Kan watershed, which have caused damage to commercial and
+residential facilities, agricultural land uses and caused casualties in the region (Delkash et al. 2014).
+
+
+2.2. Flood Inventory Data Preparation
+In order to prepare a flood susceptibility map and flood probability, it is necessary to analyses historical
+and recorded floods. The Kan watershed has been severely affected by dangerous floods in recent
+decades, causing extensive damage and casualties. According to historical floods recorded in the study
+area by Regional Water Company of Tehran Providence (1954/8/27, 1955/6/9, 1978/3/7, 1981/7/25,
+1986/2/2, 1995/4/23, 1996/4/3) as well as field visits and interviews with local indigenous individuals in
+2019/10/5 to 2019/10/9 and identification of flood-affected areas by GPS equipment (Fig. 2), 118 flood
+locations were identified in the area. A total of 118 non-flood points were randomly placed in the
+interfluvial area, or within very steep altitude where the flood phenomenon is almost impossible assigned
+to the study area. The position of the flood and non-flood locations are presented in Fig. 1. After preparing
+flooding and non-flooding locations, the data were divided into two categories of training and validation
+for modeling, so that 70% of the data were used for training and 30% for validation (Ahmadlou et al.
+2019; Choubin et al. 2019). The flowchart of research methodology are given in Fig. 3.
+
+
+2.3 Spatial Data Preparation
+Floods are one of the natural phenomena and are affected by various climatic and geo-environmental
+factors. In this study, the following fifteen climatic and geo-environmental variables are used as potential
+
+                                                   Page 4/31
+explanatory factors for flood susceptibility at a given location: altitude, aspect, slope, plan curvature,
+profile curvature, drainage density, distance form river distance from road, stream power index (SPI),
+topographic wetness index (TPI), topographic position index (TPI), curve number (CN), land use, lithology
+and annual rainfall.
+
+The above 15 factors (i.e. potential flood susceptibility model independent variables) were confirmed as
+significant by using the multi-collinearity analysis. The multi-collinearity analysis evaluates the intensity
+of multiple correlations between considered variables by calculating the variance inflation factors (VIFs).
+The higher the value of the VIF the more likely it is that that variable does not play a significant role in
+flood susceptibility prediction (Miles 2014). In this study, the threshold of 5 was used for VIF to identify
+significant enough variables (Tehrany et al. 2019a; Hosseini et al. 2020). These values were estimated
+using the USDM package in R software. The analysis has shown that all fifteen variables shown here
+have VIF values below the above threshold (see Sect. 4.1) hence they have all been used a potential
+explanatory factors for assessing the flood susceptibility.
+
+The values of above 15 variables were prepared based on previous studies (Figs. 4, 5 and 6). For this
+purpose, the digital elevation model (DEM) of the study area with resolution of 12.5 × 12.5 m was used
+type L-band Synthetic Aperture Radar (PALSAR) (https://vertex.daac.asf.alaska.edu/#). The aspect map
+was prepared based on DEM at nine class in the ArcGIS 10.5 software (Choubin et al. 2019; Janizadeh et
+al. 2019). Due to the slope effect on the surface runoff, the ground slope is one of the important factors
+in the occurrence of floods in watersheds (Tehrany et al. 2015; Chapi et al. 2017). The slope map was
+prepared based on the DEM in ArcGIS 10.5 software (Khosravi et al. 2018).
+
+The plan and profile curvature are the spatial parameters used in the preparation of flood maps of
+watersheds. These variables were prepared in ArcGIS 10.5 software using a DEM with a resolution of
+12.5 m (Rahmati et al. 2016; Hong et al. 2018). Drainage density of the study area in ArcGIS 10.5
+environment was based on line density extension (Mahmoud and Gan 2018; Zhao et al. 2019). Distance
+from rivers is one of the most important factors affecting flooding of lands along rivers (Tehrany et al.
+2014; Khosravi et al. 2016, 2018). This map was prepared using the Euclidean order in ArcGIS 10.5
+software (Khosravi et al. 2018). Distance from road is one of the human factors affecting floods. This
+variable was prepared from 1: 50000 road map of Tehran province, ArcGIS10.5 software and Euclidean
+extension were used to determine the distance from road (Shafapour Tehrany et al. 2017).
+
+The stream power index (SPI) is one of the indicators of important parameters in flood watersheds and
+the following relationship is defined (Tehrany et al. 2014; Shafizadeh-Moghadam et al. <2018):
+
+                                SP I = C atchmentArea ∗ tan (slope)
+
+
+
+1
+
+SAGA GIS 2.6 software was used to prepare this variable (Tehrany et al. 2014).
+
+
+
+                                                   Page 5/31
+Topographic position index (TPI) indicates the topographic status of the area, so that the positive values
+of this index indicate high altitudes and the negative values indicate low altitudes such as valleys
+(Papaioannou et al. 2015). Due to the role of topographic shape in the formation and formation of floods,
+this index is considered as one of factors affecting floods and this variable was prepared in SAGAGIS 2.6
+software. TWI measures the effect of local topography on runoff production and shows the long-term
+moisture content of a landscape (Hong et al. 2018; Khosravi et al. 2019), so this indicator is one of the
+influential variables in flood assessment in watersheds. This variable was obtained based on the
+following equation (Khosravi et al.2019) in SAGAGIS 2.6 software:
+
+                              T W I = ln(C atchmentArea/tan(slope ))
+
+
+
+2
+
+Lithology is one of the important factors in the flood phenomenon in watersheds due to its direct effect
+on the level of permeability and surface runoff (Rahmati et al. 2016). The geological map of the Kan
+watershed was prepared based on the geological map of 1: 100000 of the Iranian National Cartographic
+Center (NCC) and then turned into a raster layer with a resolution of 12.5. The lithology map of the study
+area was divided into 7 different classes. The soil type map was also prepared from the Administration of
+Natural Resources of Tehran Province and the vector file of this map was created with a raster format
+with pixel size of 12.5 meters using the ArcGIS 10.5 software (Tehrany et al. 2014).
+
+Land use is the result of the interrelationships of socio-cultural parameters and the potential of the land
+(Rahmati et al. 2016; Bui et al. 2018) Changes in land use and land cover have significant results in
+flooding of watersheds (Khosravi et al. 2018). This map was prepared using images of Landsat 8
+satellite imagery OLI sensors in 2019 and using the maximum likelihood algorithm and supervised
+classification in the ENVI 5.1 software and divided into four classes: orchard, rangeland, residential and
+rocky lands.
+
+In order to prepare the annual rainfall map, the rainfall data of 7 gauge stations (inside and outside the
+watershed) were used in the period 1994–2019. After carefully examining the various interpolation
+methods in the ArcGIS 10.5 software, the distribution of annual rainfall in Kan watershed was prepared
+based on the ordinary Kriging method (due to the least error).
+
+One of the most important factors in the occurrence of floods is soil conditions and different land uses,
+which directly affect the amount of water infiltration into the land. In other words, the curve number (CN)
+at the level of each area indicates the hydrological behavior of that area and its discharge regime during
+rainfall. In order to determine the CN map of the land use map and the hydrological soil groups map in
+ArcGIS software environment, it has been combined. Then, based on the tables related to the CN for
+different land uses of watersheds and according to hydrological soil groups map, the amount of CN was
+determined in the case of previous average humidity (Mahmoud and Gan 2018; Tang et al. 2018).
+3. Flood Susceptibility Models
+
+                                                  Page 6/31
+3.1 Overview
+This section describes three different models for predicting flood susceptibility: BART, NB and RF. All
+models are based on different machine learning methods that predict the flood susceptibility defined as
+the probability of flood occurrence at a given location in the analyzed watershed. All three models have
+the same set of input variables, the fifteen explanatory variables described in Sect. 2.3. These model
+inputs were determined in all cases using correlation and multi-collinearity analysis (see next section).
+Finally, all models are trained and tested using the data described in the same section.
+
+3.2 Naïve Bayes Model
+The Bayesian method is a way of classifying phenomena based on the probability of the phenomenon
+occurring or not occurring. Based on the inherent characteristics of probability (especially probability
+division), Naive Bayes offer good results after receiving the initial practice (Rish and others 2001).
+Learning method in the simplest way, the base is the type of learning with the supervisor. Bayes suggests
+a way to calculate the posterior probability, P (c | x), from P (c), P (x) and P (x | c). The Naive Bayes
+classifier assumes that the effect of the predictor cost (x) on a given category (c) of the different predictor
+values is neutral. This assumption is known as conditional independence.
+
+                                                     P (c|x) ∗ P (c)
+                                        P (c|x) =
+                                                          P (x)
+
+
+
+3
+
+                            P (c|X) = P (x1 |c) ∗ P (x2 |c) ∗ ⋯ ∗ P (xn |c)
+
+
+
+4
+
+
+
+
+prior probability of predictor (Zhang 2004). The e1071 package in R software was use for Naïve Bayes
+modeling.
+
+3.3 Random Forest Model
+Random Forest (RF) method among tree methods, it is a relatively complex method in which several
+decision trees are taught in order to increase the accuracy of the model. The result is a prediction of a
+group of decision trees. In the random forest learning method, each decision tree is taught using a
+random sample selected from the training data set. The total selection of predictive variables used to
+divide nodes is also random. In the random forest method, the two properties mtry and ntree are
+determined for the number of auxiliary variables used in each subset and the number of trees used in the
+forest, respectively. One of the advantages of a random forest is that it can be used for both classification
+and regression issues, which make up the majority of current machine learning systems. Random forest
+
+                                                   Page 7/31
+has parameters similar to the decision tree or "Bagging Classifier". Random forest adds randomness to
+the model as trees grow. Instead of searching for the most important features when dividing a "node", this
+algorithm looks for the best features among a random set of features. This leads to more variety and
+ultimately a better model. Therefore, in a random forest, only one subset of features is considered by the
+algorithm to divide a node. By adding a random threshold for each attribute, instead of searching for the
+best possible threshold, trees can be made even more random (Liaw et al. 2002). The randomForest
+package in R software was use for RF modeling.
+
+3.4 Bayesian Additive Regression Tree (BART) Model
+BART is a Bayesian approach to non-parametric output estimation using regression trees. The regression
+trees are relying on the return of the binary division of the predictive space into a set of superconductors
+to approximate certain unknown functions. The predictive space has dimensions corresponding to the
+number of variables. Tree-based regression models are capable of generating plenty of interaction and
+nonlinearity (Hill et al. 2020). Models consisting of a number of regression trees are much more capable
+of capturing interaction and nonlinearity than single trees, as are additives in f.
+
+BART can be considered a general collection of trees with a new estimation method based on a complete
+Bayesian probability model. The BART model in particular classification can be expressed in the
+following terms:
+
+                                                N               N              N
+                        P (Y = 1|X) = ϕ(τ           (X) + τ         (X) + ⋯ + τn   (X)
+                                               1                2
+
+
+
+
+5
+
+where φ denotes the cumulative density attribute of the prevalent regular distribution. In this formulation,
+the sum-of-trees model serves as an estimate of the conditional probit at x which can be besides issues
+modified into a conditional threat estimate of Y = 1 (Kapelner and Bleich2013). The bartMachine package
+in R software was use for BART modeling.
+
+3.5 Model Validation and Performance Assessment
+The ROC curve characterizes the relative performance of each model. The ROC curve is a graph in which
+the ratio of pixels that occur or occurrences with the model is correctly predicted on the horizontal axis
+(True positive or specificity) against its complementary value versus the ratio of pixels that are incorrectly
+predicted (False positive or sensitivity) is drawn on the vertical axis (Frattini et al. 2010). Sensitivity a
+proportion of occurrence pixels that have been correctly predicted, so the larger this value, the more
+accurate the model is in determining the occurrence points. Also, the feature means a ratio of non-
+occurring pixels that the model correctly predicted. The area below is called the AUC curve, which
+measures one aspect of performance. The value of AUC varies from 0 to 1, which is 0.5 times the random
+prediction and 1 is the excellent prediction (Yesilnacar and Topal 2005). In this study, the equations which
+have been used to calculate TPR, TNR, specificity, sensitivity and AUC are given bellow.
+
+
+                                                    Page 8/31
+                                                          TP
+                                          TPR =
+                                                     (T P + F N )
+
+
+
+6
+
+                                                          TN
+                                          T NR =
+                                                     (T N + F P )
+
+
+
+7
+
+                                                    N umberofpositives
+               Sensitivity =
+                                 (N umberofpositives + N umberoffalsepositives)
+
+
+
+8
+
+                                                 N umberoftruenegatives
+           Specificity =
+                              (N umberoftruenegatives + N umberoffalsenegatives)
+
+
+
+9
+
+                                                   ∑ TP + ∑ TN
+                                        AU C =
+                                                        (P + N )
+
+
+
+10
+
+
+
+
+4. Results
+4.1. Analysis of Independent Variables
+In order to build a flood susceptibility model, potential independent (i.e. input) variables are first analyzed
+for independence (via correlation) and linearity (via multi-collinearity analysis).
+
+The results of the correlation study of the variables used in flood susceptibility modelling based on
+Spearman correlation test are shown in Fig. 7. As it can be seen from this figure, the analyzed variables
+have a relatively low correlation with each other hence they were all selected for further analysis.
+
+In order to determine the appropriate inputs for flood susceptibility modelling, multiple multiplexing and
+tolerance tests were used in the R software environment using usdm package. In order to investigate the
+linearity of the VIF range, all variables with VIF value smaller than 5 were considered. The results of multi-
+colinearity and tolerance surveys are shown in Table 1. The study of the linearity of the variables shows
+                                                   Page 9/31
+that all independent variables have VIF value smaller than 5 with highest linearity obtained for distance
+from the river with VIF of 2.39 and tolerance of 0.42 and least linearity obtained for the aspect variable
+with VIF of 1.07 and tolerance of 0.93.
+
+Based on above, all variables shown in Table 1 are selected as potential inputs into the flood
+susceptibility model.
+
+                                                   Table 1
+                                Multi-collinearity analysis base on VIF and
+                                Tolerance to determine the linearity of the
+                                           independent variables
+                                 Variables                VIF    Tolerance
+
+                                 Altitude                 2.09   0.48
+
+                                 Aspect                   1.07   0.93
+
+                                 Slope                    1.57   0.64
+
+                                 Plan curvature           1.9    0.53
+
+                                 Profile Curvature        1.47   0.68
+
+                                 Drainage density         2.33   0.43
+
+                                 Distance from River      2.39   0.42
+
+                                 Distance from road       2.09   0.48
+
+                                 SPI                      1.09   0.92
+
+                                 TPI                      1.37   0.73
+
+                                 TWI                      2.01   0.50
+
+                                 CN                       1.35   0.74
+
+                                 Land use                 1.29   0.77
+
+                                 Lithology                1.27   0.79
+
+                                 Rainfall                 1.46   0.68
+
+4.2. Tune parameters
+The result of tune parameters in BART model to flood susceptibility showed in Table 1 and Fig. 8.
+
+
+
+
+                                                  Page 10/31
+                                                 Table 2
+                                       Tune parameters in BART model
+                               Parameters                        Tune value
+
+                               Number of trees                   100
+
+                               Number burn in                    500
+
+                               Number iteration after burn in    1000
+
+                               alpha                             0.95
+
+                               beta                              2
+
+                               k                                 2
+
+                               q                                 0.9
+
+
+4.3 Model Validation
+ROC curves parameters include sensitivity, specificity, NPV, PPV and area under curve (AUC) were used to
+evaluate the efficiency of Naïve Bayes, RF and BART models. The results of the evaluation of the models
+in the training and testing stages are shown in Figs. 9 and 10 and Table 3.
+
+According to the results obtained in the training phase, the sensitivity statistics in NB, RF and BART
+models are 0.76, 0.99 and 0.99, respectively, which show the high sensitivity of the models used in
+modelling and their accuracy. The specificity statistics for the NB, RF and BART models were 0.89, 0.95
+and 0.90, respectively. The PPV statistics of 0.74, 0.95 and 0.91, respectively, and the NPV statistics of
+0.77, 0.99 and 0.98, respectively, were obtained in the NB, RF and BART models, which show the higher
+accuracy of the models in predicting the non-occurrence points. The results of model evaluation based on
+AUC showed that the accuracy of NB, RF and BART models is 0.88, 0.99 and 0.89, respectively, and these
+models have high accuracy in the training stage.
+
+Evaluation of the models used in the validation phase showed that the sensitivity statistics for NB, RF
+and BART models were 0.76, 0.91 and 0.94, respectively, and showed the high sensitivity of the models in
+flood estimation. The specificity statistics in the Naïve Bayes, RF and BART models were 0.75, 0.72 and
+0.78, respectively. Evaluation of the models based on PPV and NPV statistics showed that this PPV is
+0.74, 0.75, 0.80, and NPV 0.77, 0.90, and 0.93, respectively, in the Naïve Bayes, RF, and BART models,
+indicating greater accuracy of the models in predicting non-flood points compared to flood points. For the
+overall evaluation of the models in the validation phase, the area under the curve (AUC) statistic was used
+and the results of AUC were obtained for Naïve Bayes, RF and BART models of 0.81, 0.85 and 0.89,
+respectively.
+
+
+
+
+                                                 Page 11/31
+                                                    Table 3
+              The results of evaluating the efficiency of Naïve Bayes, RF and BART models in
+                                         train and validation stage
+               Models           Stage         Parameters
+
+                                              Sensitivity         Specificity   PPV    NPV    AUC
+
+               Naïve Bayes      Train         0.76                0.89          0.87   0.78   0.88
+
+                                Validation    0.76                0.75          0.74   0.77   0.81
+
+               RF               Train         0.99                0.95          0.95   0.99   0.99
+
+                                Validation    0.91                0.72          0.75   0.90   0.85
+
+               BART             Train         0.99                0.90          0.91   0.98   0.98
+
+                                Validation    0.94                0.78          0.80   0.93   0.89
+
+
+4.4. Flood susceptibility modeling results
+After modelling the flood sensitivity using Naive Bayes, RF and BART models and evaluating the
+efficiency of these models, flood susceptibility was forecasted in the whole watershed. The final map was
+divided into five different classes, very low, low, moderate, high and very high in terms of susceptibility in
+ArcGIS software environment and using natural break algorithm (Fig. 11). According to the flood
+susceptibility maps prediction, flood susceptibility is the highest flood sensitivity around the main river
+and the areas near the outlet of the watershed, which have a lower altitude. While most of the area, which
+is generally high altitude, has a very low sensitivity class.
+
+The results of the area and percentage covered by each susceptibility class are shown in Table 4.
+According to the results, the highest area of very high susceptibility class is Naive Bayes with 22.11 km2
+(10.26%), RF with 21.23 Km2 (9.85%) and BART with 19.48 Km2 (9.04%), respectively. However, the BART
+model, with 50.5 Km2 (23.5%), has the largest area with very high and high susceptibility classes.
+
+In order to evaluate the validity of the predicted flood susceptibility maps in relation to the identified flood
+points in the study area, the frequency ratio (FR) was used (Fig. 9). According to the results of Fig. 12, it is
+observed that the highest frequency ratio is in very high and high classes, which indicates the appropriate
+prediction of the models used for flood-susceptibility areas, however, the FR in the BART model in the very
+high class is much higher than the other two models, which indicates a more accurate prediction of flood
+susceptibility in this area.
+
+Table 4. The percent and area of each flood susceptibility classes.
+
+
+
+
+                                                     Page 12/31
+    Susceptibility class    Naïve Bayes                  RF                          BART
+
+                            Area (km2)      Area (%)     Area (km2)     Area (%)     Area (km2)     Area (%)
+
+    Very low                121.85          56.52        112.32         52.10        106            49.17
+
+    Low                     31.53           14.62        33.24          15.42        28.39          13.17
+
+    Moderate                21.67           10.05        31.04          14.40        30.65          14.22
+
+    High                    18.44           8.55         17.77          8.24         31.08          14.42
+
+    Very High               22.11           10.26        21.23          9.85         19.48          9.04
+
+4.3. Explanatory Variable Importance
+The results of the importance of the independent (i.e. input) variables used to model the flood
+susceptibility using the three Naïve Bayes, RF and BART models are shown in Fig. 13. Based on the
+results, it is clear that in the three models used, the variables have different effects on determining the
+flood susceptibility. However, it is clear the variables of altitude and distance from the river in all three
+models were more important than other variables in modelling.
+
+Due to the importance of 4 variables altitude, distance from the river, distance from road and rainfall on
+flood susceptibility in BART model, the graph of minor changes of these 4 variables in flood susceptibility
+was investigated (Fig. 14). Based on the results of partial effects in altitude, it is determined that with
+increasing altitude, the flood susceptibility decreases, so that the highest sensitivity to floods is at an
+altitude of 1400 meters, which is close to the outlet of the watershed and with increasing altitude, the
+susceptibility is reduced and indicates the inverse relationship between the altitude variable and the flood
+susceptibility. A study of the distance from river variable shows that distances less than 500 meters have
+a high susceptibility to floods and from 500 meters upwards the trend of flood susceptibility has been
+decreasing so that at distances of 1000–1500 meters probability flood susceptibility is low and constant.
+In the distance from road variable, with increasing distance from the road, the sensitivity to flood has a
+decreasing trend. The most sensitive areas are less than 1000 meters from the road. A study of the effect
+of rainfall variable on flood sensitivity shows that areas with 450 to 500 mm of rainfall are more sensitive
+than flood and with increasing rainfall, the susceptibility decreases so that from rainfall 550 to 650 mm,
+the susceptibility is low and constant.
+5. Discussion
+Performance evaluation of Naïve Bayes, RF, and BART models showed that the BART model performed
+best in the validation stage in terms of predicting flood susceptibility. The BART model is a non-
+parametric Bayesian regression approach that uses consistent basic random elements. Bayesian Additive
+Regression Trees (BART) provides a flexible way to fit a variety of regression models while avoiding
+strong parametric assumptions (Hill et al. 2020). The tree ensemble model is supported by an uncertainty
+framework in the Bayesian inferential framework and provides a principled approach to regulation
+through previous specifications (Pratola and Higdon 2016; Sparapani et al. 2016). This model uses a
+                                                    Page 13/31
+non-parametric tree aggregation model to allow flexibility of the average structure of a regression. But it
+also has the advantages of a Bayesian inferential framework given the amount of uncertainty and its
+regulation through calibrated data locations (Sparapani et al. 2016; Hill et al. 2020).
+
+One of the main advantages of the BART model is the capacity to form inference on numerous features
+of the survival distribution directly from the posterior samples. As a Bayesian model, BART consists of a
+set of priors for the construction and the leaf parameters and a possibility for data in the terminal nodes
+(Pratola and Higdon 2016; Sparapani et al. 2016). The object of the priors is to afford regularization,
+limiting any single regression tree from dominating the total fit. Many ML models suffer from missing
+data problems. BART model has a specialty that provides the user to straight designation missing
+covariate data within the BART structure. This method combines missing data indicators into the training
+data set and supports for divisions on the missing indicators, guiding to raised efficiency under a pattern
+ensemble model structure (Hill et al. 2020). Various researchers (Choubin et al. 2019; Arabameri et al.
+2020; Shahabi et al. 2020) have also concluded in the study of flood susceptibility that ensemble models
+perform better than individual models and they explained that the ensemble models use a combination of
+several models, which reduces the prediction error of the model using this approach and with ensemble
+different models, the limitations of each model can be reduced and more acceptable results can be
+obtained.
+
+Determining the importance of independent variables in flood susceptibility modeling in the Kan
+watershed showed that altitude, distance from river, distance from road and rainfall variables are
+important factors affecting flood susceptibility in this region. A study of altitude variable shows that low
+altitudes, which are often at the outlet of watersheds, are highly susceptible to flooding, which is
+consistent with the findings of Khosravi et al. (2019), Pham et al., (2020a).
+
+Distance from river is another important factor in flood susceptibility in the Kan watershed, and the
+results indicate the sensitivity of areas close to the river. Ahmadlou et al., (2019) showed in their studies
+that areas 500–1000 meters from the river are highly sensitive to flooding. Given that the flood-prone
+areas are located near the river and the reason is due to rise of flow from the river channels (Choubin et
+al. 2019; Darabi et al. 2019), in the Kan watershed, due to lack of observance of riverbed and river
+boundaries, several restaurants and villas have been built in the areas near the river, and due to the
+presence of more orchard in the river area, has led to the obstruction of flow in these areas and has
+increased the sudden release of flood current. Invasion of the river boundaries and the create of orchard
+in it, in addition to causing financial damage to the residents of the area, also by blocking the flow in
+sections such as tunnels, will cause secondary floods and intensify the damage to the people and
+downstream areas.
+
+Another factor affecting the flood susceptibility in the Kan watershed is the distance from road, according
+to the results, it was found that areas close to the road are highly sensitive to flooding. Construction and
+crate of communication roads will increase the runoff and runoff speed because it will reduce the area of
+
+
+                                                  Page 14/31
+the existing surface to absorb rainfall and thus increase the sensitivity to flooding in these areas (Tehrany
+et al. 2019b; Zhao et al. 2019).
+
+The study of the rainfall factor indicates that areas with less rainfall are highly susceptible to flood, which
+are mainly areas close to the outlet of the Kan watershed. Due to the mountainous nature of the region,
+most of the precipitation in the upstream areas of the Kan watershed is snow, so in these areas the
+possibility of infiltration is higher. In addition, precipitation in the downstream areas is in the form of
+storms and these storms are usually more severe in the autumn and causes the river inundation and
+flooding.
+
+
+6. Conclusion
+Among the existing natural disasters, floods are one of the most frequent and destructive dangers that
+cause a lot of damage. In order to investigate and analyze floods, different methods have been studied by
+different researchers, considering that the two components of time and accuracy in reducing risk and
+primary warning play a key role in modeling natural hazards, therefore, different methods and algorithms
+should be considered in terms of efficiency and reliability to select the most suitable ones.
+
+In this study, the Bayesian based model (Naïve Bayes), regression tree type model (Random Forest) and
+ensemble type model (Bayesian Additive Regression Tree - BART) were developed to predict flood
+susceptibility in the Kan watershed. A total of 15 explanatory (i.e. model input) variables were used after
+multi-collinearity analyses as independent variables and 118 flood locations and 115 non-flood locations
+after field surveys and the use of available information as a dependent variable for flood modeling.
+
+The validation results obtained for flood susceptibility modeling showed that the Naïve Bayes, RF and
+BART models all have a good predictive performance. However, the new BART model has the higher
+prediction accuracy than the Naïve Bayes and RF models. This is due to the fact that it uses features of
+both methods in the ensemble setting.
+
+The analysis of the importance of explanatory variables showed that the effect of independent variables
+is different in each model. However, the altitude and distance from the river were more important than
+other variables in all three models. Due to the partial effect in these variables, it was found that low-height
+areas and areas close to the river are more susceptible to flooding.
+
+The Kan watershed is close to the city of Tehran and the pleasant climate of this tourist area has caused
+that its riverbanks are occupied without any regulations and many constructions that have been carried
+out. These areas receive a large number of tourists in spring and summer and hence are strongly affected
+by the floods. It is therefore necessary to provide flood hazard maps for the region. The results of this
+research can be used, as baseline map in development projects and proper management to determine the
+floodplain area to prevent construction in high-risk areas to reduce the vulnerability.
+
+
+Declarations
+                                                   Page 15/31
+Author Contributions: Saeid Janizadeh acquired the data; Saeid Janizadeh and Mehdi Vafakhah
+conceptualized and performed the analysis; Saeid Janizadeh wrote the manuscript and discussion, and
+analyzed the data; Mehdi Vafakhah, Zoran Kapelan and Naghmeh Mobarghaee Dinan provided technical
+sights, as well as edited, restructured, and professionally optimized the manuscript. All authors discussed
+the results and edited the manuscript. All authors have read and agreed to the published version of the
+manuscript.
+
+Ethical Approval: We confirm that this manuscript has not been published elsewhere and is not under
+consideration by another journal.
+
+Consent to Participate: All authors have participated the manuscript and agree with submission to Water
+Resources Management.
+
+Consent to Publish: All authors have approved the publication of this manuscript in the Water Resources
+Management Journal.
+
+Availability of data and materials: We have no permission to release data and codes.
+
+Funding: The authors received no specific funding for this work.
+
+Acknowledgments: We acknowledge Tarbiat Modares University's support for this work.
+
+Conflicts of Interest: The authors declare no conflict of interest.
+
+
+References
+  1. Ahmadlou M, Karimi M, Alizadeh S et al (2019) Flood susceptibility assessment using integration of
+    adaptive network-based fuzzy inference system (ANFIS) and biogeography-based optimization
+    (BBO) and BAT algorithms (BA). Geocarto Int 34:1252–1272
+  2. Al-Abadi AM (2018) Mapping flood susceptibility in an arid region of southern Iraq using ensemble
+     machine learning classifiers: a comparative study. Arab J Geosci 11:218
+  3. Al-Juaidi AEM, Nassar AM, Al-Juaidi OEM (2018) Evaluation of flood susceptibility mapping using
+     logistic regression and GIS conditioning factors. Arab J Geosci 11:765
+  4. Arabameri A, Saha S, Chen W et al (2020) Flash flood susceptibility modelling using functional tree
+    and hybrid ensemble techniques. J Hydrol 125007
+  5. Bui DT, Panahi M, Shahabi H et al (2018) Novel hybrid evolutionary algorithms for spatial prediction
+    of floods. Sci Rep 8:15364
+  6. Chapi K, Singh VP, Shirzadi A et al (2017) A novel hybrid artificial intelligence approach for flood
+    susceptibility assessment. Environ Model Softw 95:229–245
+  7. Chen W, Li Y, Xue W et al (2020) Modeling flood susceptibility using data-driven approaches of
+    na{\"\i}ve bayes tree, alternating decision tree, and random forest methods. Sci Total Environ
+
+                                                   Page 16/31
+   701:134979
+ 8. Choubin B, Moradi E, Golshan M et al (2019) An ensemble prediction of flood susceptibility using
+   multivariate discriminant analysis, classification and regression trees, and support vector machines.
+   Sci Total Environ 651:2087–2096
+ 9. Cook A, Merwade V (2009) Effect of topographic data, geometric configuration and modeling
+   approach on flood inundation mapping. J Hydrol 377:131–142
+10. Costache R (2019) Flash-flood Potential Index mapping using weights of evidence, decision Trees
+   models and their novel hybrid integration. Stoch Environ Res Risk Assess 33:1375–1402
+11. Costache R, Bui DT (2020) Identification of areas prone to flash-flood phenomena using multiple-
+   criteria decision-making, bivariate statistics, machine learning and their ensembles. Sci Total Environ
+   712:136492
+12. Darabi H, Choubin B, Rahmati O et al (2019) Urban flood risk mapping using the GARP and QUEST
+   models: A comparative study of machine learning techniques. J Hydrol 569:142–154
+13. Delkash M, Al-Faraj FAM, Scholz M (2014) Comparing the export coefficient approach with the soil
+   and water assessment tool to predict phosphorous pollution: the Kan watershed case study. Water
+   Air Soil Pollut 225:2122
+14. Frattini P, Crosta G, Carrara A (2010) Techniques for evaluating the performance of landslide
+    susceptibility models. Eng Geol 111:62–72
+15. Heidari A (2014) Flood vulnerability of the K arun R iver S ystem and short-term mitigation measures.
+   J flood risk Manag 7:65–80
+16. Hill J, Linero A, Murray J (2020) Bayesian additive regression trees: A review and look forward. Annu
+   Rev Stat Its Appl 7:251–278
+17. Hong H, Panahi M, Shirzadi A et al (2018) Flood susceptibility assessment in Hengfeng area
+   coupling adaptive neuro-fuzzy inference system with genetic algorithm and differential evolution. Sci
+   Total Environ 621:1124–1141
+18. Hosseini FS, Choubin B, Mosavi A et al (2020) Flash-flood hazard assessment using ensembles and
+   Bayesian-based machine learning models: application of the simulated annealing feature selection
+   method. Sci Total Environ 711:135161
+19. Janizadeh S, Avand M, Jaafari A et al (2019) Prediction Success of Machine Learning Methods for
+    Flash Flood Susceptibility Mapping in the Tafresh Watershed. Iran Sustainability 11:5426
+20. Kapelner A, Bleich J (2013) bartMachine: Machine learning with Bayesian additive regression trees.
+    arXiv Prepr arXiv13122171
+21. Khosravi K, Pham BT, Chapi K et al (2018) A comparative assessment of decision trees algorithms
+   for flash flood susceptibility modeling at Haraz watershed, northern Iran. Sci Total Environ 627:744–
+   755
+22. Khosravi K, Pourghasemi HR, Chapi K, Bahri M (2016) Flash flood susceptibility analysis and its
+    mapping using different bivariate models in Iran: a comparison between Shannon’s entropy,
+
+                                                Page 17/31
+   statistical index, and weighting factor models. Environ Monit Assess 188:656
+23. Khosravi K, Shahabi H, Pham BT et al (2019) A comparative assessment of flood susceptibility
+   modeling using Multi-Criteria Decision-Making Analysis and Machine Learning Methods. J Hydrol
+   573:311–323
+24. Liaw A, Wiener M, others (2002) Classification and regression by randomForest. R news 2:18–22
+25. Liu R, Chen Y, Wu J et al (2016) Assessing spatial likelihood of flooding hazard using na{\"\i}ve
+    Bayes and GIS: a case study in Bowen Basin, Australia. Stoch Environ Res risk Assess 30:1575–
+   1590
+26. Mahmoud SH, Gan TY (2018) Multi-criteria approach to develop flood susceptibility maps in arid
+   regions of Middle East. J Clean Prod 196:216–229
+27. Miles J (2014) Tolerance and variance inflation factor. Wiley StatsRef Stat Ref Online
+28. Molinos-Senante M, Hernández-Sancho F, Sala-Garrido R (2011) Cost–benefit analysis of water-
+   reuse projects for environmental purposes: A case study for Spanish wastewater treatment plants. J
+   Environ Manage 92:3091–3097
+29. Papaioannou G, Vasiliades L, Loukas A (2015) Multi-criteria analysis framework for potential flood
+    prone areas mapping. Water Resour Manag 29:399–418
+30. Perera EDP, Hiroe A, Shrestha D et al (2015) Community-based flood damage assessment approach
+    for lower West Rapti River basin in Nepal under the impact of climate change. Nat Hazards 75:669–
+   699
+31. Pham BT, Avand M, Janizadeh S et al (2020a) GIS Based Hybrid Computational Approaches for
+   Flash Flood Susceptibility Assessment. Water 12:683
+32. Pham BT, Phong T, Van, Nguyen HD et al (2020b) A Comparative Study of Kernel Logistic Regression,
+    Radial Basis Function Classifier, Multinomial Na{\"\i}ve Bayes, and Logistic Model Tree for Flash
+   Flood Susceptibility Mapping. Water 12:239
+33. Pratola MT, Higdon DM (2016) Bayesian additive regression tree calibration of complex high-
+   dimensional computer models. Technometrics 58:166–179
+34. Rahmati O, Pourghasemi HR, Zeinivand H (2016) Flood susceptibility mapping using frequency ratio
+   and weights-of-evidence models in the Golastan Province, Iran. Geocarto Int 31:42–70
+35. Rish I, others (2001) An empirical study of the naive Bayes classifier. In: IJCAI 2001 workshop on
+    empirical methods in artificial intelligence. pp 41–46
+36. Shafapour Tehrany M, Shabani F, Neamah Jebur M et al (2017) GIS-based spatial prediction of flood
+    prone areas using standalone frequency ratio, logistic regression, weight of evidence and their
+   ensemble techniques. Geomatics, Nat Hazards Risk 8:1538–1561
+37. Shafizadeh-Moghadam H, Valavi R, Shahabi H et al (2018) Novel forecasting approaches using
+   combination of machine learning and statistical models for flood susceptibility mapping. J Environ
+   Manage 217:1–11
+
+
+
+                                                Page 18/31
+38. Shahabi H, Shirzadi A, Ghaderi K et al (2020) Flood detection and susceptibility mapping using
+    sentinel-1 remote sensing data and a machine learning approach: Hybrid intelligence of bagging
+   ensemble based on k-nearest neighbor classifier. Remote Sens 12:266
+39. Sparapani RA, Logan BR, McCulloch RE, Laud PW (2016) Nonparametric survival analysis using
+    Bayesian additive regression trees (BART). Stat Med 35:2741–2753
+40. Tang X, Li J, Liu M et al (2020) Flood susceptibility assessment based on a novel random Na{\"\i}ve
+    Bayes method: A comparison between different factor discretization methods. Catena 190:104536
+41. Tang Z, Yi S, Wang C, Xiao Y (2018) Incorporating probabilistic approach into local multi-criteria
+    decision analysis for flood susceptibility assessment. Stoch Environ Res risk Assess 32:701–714
+42. Tehrany MS, Jones S, Shabani F (2019a) Identifying the essential flood conditioning factors for flood
+    prone area mapping using machine learning techniques. Catena 175:174–192
+43. Tehrany MS, Kumar L (2018) The application of a Dempster–Shafer-based evidential belief function
+   in flood susceptibility mapping and comparison with frequency ratio and logistic regression
+   methods. Environ Earth Sci 77:490
+44. Tehrany MS, Kumar L, Shabani F (2019b) A novel GIS-based ensemble technique for flood
+    susceptibility mapping using evidential belief function and support vector machine: Brisbane,
+   Australia. PeerJ 7:e7653
+45. Tehrany MS, Pradhan B, Jebur MN (2014) Flood susceptibility mapping using a novel ensemble
+   weights-of-evidence and support vector machine models in GIS. J Hydrol 512:332–343
+46. Tehrany MS, Pradhan B, Mansor S, Ahmad N (2015) Flood susceptibility assessment using GIS-
+    based support vector machine model with different kernel types. Catena 125:91–101
+47. Vafakhah M, Loor SMH, Pourghasemi H, Katebikord A (2020) Comparing performance of random
+    forest and adaptive neuro-fuzzy inference system data mining models for flood susceptibility
+   mapping. Arab J Geosci 13:417
+48. Vetrivel A, Gerke M, Kerle N et al (2018) Disaster damage detection through synergistic use of deep
+   learning and 3D point cloud features derived from very high resolution oblique aerial images, and
+   multiple-kernel-learning. ISPRS J Photogramm Remote Sens 140:45–59
+49. Woodward M, Kapelan Z, Gouldby B (2014) Adaptive flood risk management under climate change
+   uncertainty using real options and optimization. Risk Anal 34:75–92
+50. Yariyan P, Janizadeh S, Van Phong T et al (2020) Improvement of Best First Decision Trees Using
+   Bagging and Dagging Ensembles for Flood Probability Mapping. Water Resour Manag 1–17
+51. Yesilnacar E, Topal T (2005) Landslide susceptibility mapping: a comparison of logistic regression
+   and neural networks methods in a medium scale study, Hendek region (Turkey). Eng Geol 79:251–
+   266
+52. Zhang H (2004) The Optimality of Naive Bayes, 2004. Am Assoc Artif Intell (www aaai org)
+53. Zhao G, Pang B, Xu Z et al (2019) Assessment of urban flood susceptibility using semi-supervised
+    machine learning model. Sci Total Environ 659:940–949
+
+                                               Page 19/31
+Figures
+
+
+
+
+Figure 1
+
+Location of case study a) Iran country b) Tehran Province and c) Kan watershed
+
+
+
+
+                                              Page 20/31
+Figure 2
+
+Example of a flood location in the Kan watershed
+
+
+
+
+                                               Page 21/31
+Figure 3
+
+Methodological flowchart of research steps
+
+
+
+
+                                             Page 22/31
+Figure 4
+
+Flood conditioning factors: a) altitude, b) aspect, c) slope, d) plan curvature, e) profile curvature, f)
+drainage density
+
+
+
+
+                                                   Page 23/31
+Figure 5
+
+Flood conditioning factors: g) distance form river, h) distance from road, i) SPI, j) TWI, k) TPI, l) CN
+
+
+
+
+                                                   Page 24/31
+Figure 6
+
+Flood conditioning factors: land use, n) lithology and o) annual rainfall
+
+
+
+
+                                                 Page 25/31
+Figure 7
+
+Correlation analyses between independent variables
+
+
+
+
+                                              Page 26/31
+Figure 8
+
+The result of BART model in flood susceptibility
+
+
+
+
+Figure 9
+
+The ROC curve analysis for Naïve Bayes, RF and BART models using the train dataset
+
+
+
+
+                                                   Page 27/31
+Figure 10
+
+The ROC curve analysis for Naïve Bayes, RF and BART models using the testing dataset.
+
+
+
+
+                                              Page 28/31
+Figure 11
+
+Flood susceptibility map using the Naïve Bayes, RF and BART models
+
+
+
+
+                                             Page 29/31
+Figure 12
+
+Analysis of the frequency of floods on the flood susceptibility maps by FR method
+
+
+
+
+Figure 13
+
+Results of relative importance of independent variables in flood sensitivity modeling in Naïve Bayes, RF
+and BART models
+                                                Page 30/31
+Figure 14
+
+Partial effect plot for four importance variable (altitude, distance from river, distance from road and
+rainfall)
+
+
+
+
+                                                  Page 31/31
+
