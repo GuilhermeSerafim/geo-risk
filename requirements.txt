@@ -11,3 +11,5 @@ langchain-text-splitters
 openai
 python-dotenv
 numpy
+pydantic
+faiss-cpu
