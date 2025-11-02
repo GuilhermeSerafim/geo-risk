@@ -3,6 +3,7 @@ from pydantic import BaseModel
 from shapely.geometry import shape
 from services.water_service import distance_to_water_info, features
 from services.elevation_service import elevation_m
+from services.ai_service import get_ai_answer
 
 router = APIRouter()
 
@@ -23,17 +24,22 @@ def risk_api(req: DistanceReq):
     elev_rio = elevation_m(rio_lat, rio_lon)
     queda_rel = (elev_ponto - elev_rio) if elev_ponto and elev_rio else None
 
-    if dist_m < 150 and (queda_rel is not None and queda_rel < 5):
-        score, nivel = 9.0, "Alto"
-    elif dist_m < 300 or (queda_rel is not None and queda_rel < 10):
-        score, nivel = 6.0, "Médio"
-    else:
-        score, nivel = 2.0, "Baixo"
+    # 🧠 Pergunta contextual para a IA
+    queda_rel_str = f"{queda_rel:.1f}" if queda_rel is not None else "N/A"
+    prompt = (
+        f"Com base nas seguintes informações:\n"
+        f"- Distância até o rio: {dist_m:.1f} metros\n"
+        f"- Queda relativa (diferença de altitude): {queda_rel_str} metros\n"
+        f"- Rio mais próximo: {rio_nome}\n\n"
+        "Classifique o risco de alagamento como **Baixo**, **Médio** ou **Alto**, "
+        "e explique brevemente o motivo da classificação de forma técnica e objetiva."
+    )
+    
+    resposta_ia = get_ai_answer(prompt)
 
     return {
-        "score": score,
-        "nivel": nivel,
         "distancia_rio_m": round(dist_m, 1),
         "queda_relativa_m": round(queda_rel, 1) if queda_rel is not None else None,
-        "rio_mais_proximo": rio_nome
+        "rio_mais_proximo": rio_nome,
+        "resposta_ia": resposta_ia
     }
