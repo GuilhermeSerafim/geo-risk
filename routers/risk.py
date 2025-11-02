@@ -3,7 +3,7 @@ from pydantic import BaseModel
 from shapely.geometry import shape
 from services.water_service import distance_to_water_info, features
 from services.elevation_service import elevation_m
-from services.ai_service import get_ai_answer
+from services.ai_service import get_ai_assessment
 
 router = APIRouter()
 
@@ -35,11 +35,12 @@ def risk_api(req: DistanceReq):
         "e explique brevemente o motivo da classificação de forma técnica e objetiva."
     )
     
-    resposta_ia = get_ai_answer(prompt)
+    ai = get_ai_assessment(prompt)
 
     return {
         "distancia_rio_m": round(dist_m, 1),
         "queda_relativa_m": round(queda_rel, 1) if queda_rel is not None else None,
         "rio_mais_proximo": rio_nome,
-        "resposta_ia": resposta_ia
+        "resposta_ia": ai.explanation,
+        "risk_level": ai.risk_level
     }
