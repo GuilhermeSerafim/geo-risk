@@ -15,7 +15,7 @@ Ela combina informações espaciais (distância até rios, elevação e declivid
 ---
 ### 📊 Dados geoespaciais
 
-Os dados de corpos d’água (rios, córregos e canais) utilizados neste projeto foram extraídos diretamente da plataforma Overpass Turbo
+Os dados de corpos d’água (rios, córregos e canais de CURITIBA inicialmente) utilizados neste projeto foram extraídos diretamente da plataforma Overpass Turbo
  — um ambiente de consulta da base OpenStreetMap (OSM).
 
 🔹 Origem dos dados: OpenStreetMap (via Overpass API) <br/>
