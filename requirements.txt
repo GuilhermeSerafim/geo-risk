@@ -3,3 +3,11 @@ uvicorn
 shapely
 pyproj
 requests
+langchain
+langchain-openai
+langchain-community
+langchain-core
+langchain-text-splitters
+openai
+python-dotenv
+numpy

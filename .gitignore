@@ -1,0 +1,20 @@
+# Arquivos de ambiente
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+
+# Dependências
+node_modules/
+venv/
+__pycache__/
+
+# Logs e temporários
+*.log
+*.tmp
+.DS_Store
+
+# Build/output
+dist/
+build/
