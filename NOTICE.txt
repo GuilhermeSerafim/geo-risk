@@ -1,0 +1,4 @@
+NOTICE
+This repository contains software authored by Guilherme da Silva Serafim (Guiler).
+If you build a product, demo or presentation using this code, keep the
+attribution and display “Powered by GeoRisk” with a link to the original repo.
