@@ -1,6 +1,6 @@
 # 🌎 GeoRisk – Back-end API
 
-> MVP para análise de risco de alagamento usando dados geográficos e inteligência artificial.
+> MVP para análise de risco de alagamento em curitiba usando dados geográficos e inteligência artificial.
 
 ## 🚀 Visão geral
 

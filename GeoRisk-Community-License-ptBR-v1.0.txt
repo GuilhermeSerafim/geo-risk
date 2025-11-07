@@ -1,0 +1,53 @@
+GEO RISK COMMUNITY LICENSE v1.0 (PT‑BR)
+Copyright (c) 2023–2025 Guilherme da Silva Serafim (“Titular”)
+
+OBS.: Esta é uma licença de código “source‑available”. Não é uma licença open‑source aprovada pela OSI.
+
+1. DEFINIÇÕES
+1.1 “Software”: o código‑fonte, binários, modelos, prompts, esquemas de dados e documentação incluídos neste repositório.
+1.2 “Você”: qualquer pessoa física ou jurídica que obtenha o Software sob esta licença.
+1.3 “Derivado”: obra baseada no Software (modificações, forks, integrações, adaptações, traduções).
+1.4 “Uso Não‑Comercial”: uso pessoal, educacional, acadêmico, de pesquisa ou interno à organização, sem oferta a terceiros mediante remuneração (direta ou indireta) e sem exploração em produção para entregar produtos/serviços a clientes pagantes.
+1.5 “Crédito visível”: indicação textual “Powered by GeoRisk” acompanhada de link público para este repositório ou site oficial do projeto.
+1.6 “White‑label”: ocultar ou suprimir marca, nomes, créditos e referências para apresentar o Software como se fosse de outro titular.
+
+2. CONCESSÃO DE DIREITOS (USO NÃO‑COMERCIAL)
+Sujeito ao cumprimento desta licença, o Titular concede a Você, de forma gratuita, não‑exclusiva, intransferível e revogável, o direito de:
+(a) usar e executar o Software; (b) copiar e criar Derivados; (c) distribuir o Software e Derivados, exclusivamente para Uso Não‑Comercial, desde que todos os avisos de copyright, esta licença e os requisitos de crédito sejam mantidos.
+
+3. ATRIBUIÇÃO OBRIGATÓRIA
+3.1 Qualquer distribuição, demonstração pública, site, API pública, aplicação ou material que incorpore o Software ou Derivados deve exibir Crédito visível em local razoável (rodapé, tela “sobre”, README e/ou documentação).
+3.2 É obrigatório manter os avisos de copyright, autoria e licença no código e na documentação.
+
+4. RESTRIÇÕES
+Sem licença comercial por escrito do Titular, é proibido:
+4.1 Uso Comercial: vender, licenciar, alugar, ofertar como serviço (SaaS/serviço profissional), integrar em produto/serviço remunerado, ou operar em produção para clientes pagantes, inclusive em órgãos públicos mediante contrato.
+4.2 White‑label e falsa autoria: remover créditos/marca, sugerir que é autor original, ou exibir o Software/Derivados “como se fossem seus”.
+4.3 Sublicenciamento conflitivo: redistribuir o Software/Derivados sob termos que contradigam esta licença.
+4.4 Treinamento de IA: usar o Software como corpus para treinar modelos que tenham como finalidade reproduzir substancialmente funcionalidades do Software, sem autorização expressa.
+4.5 Contorno de termos: qualquer tentativa de burlar limitações acima revoga automaticamente esta licença.
+
+5. MARCAS
+5.1 Nada nesta licença concede direitos sobre as marcas “GeoRisk” ou outras marcas do Titular, exceto o uso estritamente necessário para o crédito exigido.
+5.2 O uso de marcas e logotipos depende de autorização prévia por escrito do Titular.
+
+6. DADOS, PRIVACIDADE E CONFORMIDADE
+Ao usar o Software com dados de terceiros, Você é responsável por cumprir a legislação aplicável (incluindo LGPD), adotar segurança razoável e obter as autorizações necessárias.
+
+7. LICENÇA COMERCIAL
+Para uso comercial, white‑label, exclusividade, suporte e/ou remoção do crédito visual, é necessária licença comercial separada acordada com o Titular (contato: guilerstudies@gmail.com).
+
+8. VIGÊNCIA E RESCISÃO
+Esta licença vigora enquanto Você cumprir seus termos. Em caso de violação, os direitos são automaticamente encerrados. O Titular pode conceder prazo razoável para cura, a seu critério. As seções 3–6, 8–11 sobrevivem à rescisão.
+
+9. ISENÇÃO DE GARANTIAS
+O SOFTWARE É FORNECIDO “NO ESTADO EM QUE SE ENCONTRA”, SEM GARANTIAS DE QUALQUER ESPÉCIE, EXPRESSAS OU IMPLÍCITAS, INCLUINDO, SEM LIMITAÇÃO, GARANTIAS DE COMERCIALIZAÇÃO, ADEQUAÇÃO A UM FIM ESPECÍFICO E NÃO‑VIOLAÇÃO.
+
+10. LIMITAÇÃO DE RESPONSABILIDADE
+EM NENHUMA HIPÓTESE O TITULAR SERÁ RESPONSÁVEL POR QUAISQUER DANOS, LUCROS CESSANTES OU PERDAS DE DADOS DECORRENTES DO USO OU IMPOSSIBILIDADE DE USO DO SOFTWARE, AINDA QUE AVISADO DA POSSIBILIDADE DE TAIS DANOS.
+
+11. LEI APLICÁVEL E FORO
+Aplica‑se a lei brasileira. Fica eleito o foro da Comarca de Curitiba/PR, Brasil, com renúncia a qualquer outro, por mais privilegiado que seja.
+
+—
+Para obter licença comercial: guilerstudies@gmail.com
