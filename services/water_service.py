@@ -5,7 +5,7 @@ from pyproj import Transformer
 import json
 import numpy as np
 
-gj = json.load(open("data/exportCuritiba.geojson", encoding="utf-8"))
+gj = json.load(open("data/exportCurtibaTypeAllRivers.geojson", encoding="utf-8"))
 features = gj["features"]
 water_geoms = [shape(f["geometry"]) for f in features]
 tree = STRtree(water_geoms)
