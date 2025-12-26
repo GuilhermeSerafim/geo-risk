@@ -18,3 +18,13 @@ app.add_middleware(
 app.include_router(distance_router, prefix="/geo")
 app.include_router(risk_router, prefix="/geo")
 app.include_router(ai_router, prefix="/ai")
+
+# ==========================
+# HEALTH / PING ROUTE
+# ==========================
+@app.get("/ping", tags=["Health"])
+def ping():
+    return {
+        "status": "ok",
+        "service": "GeoRisk API"
+    }
